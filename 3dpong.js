@@ -1,3 +1,5 @@
+if (!Detector.webgl) Detector.addGetWebGLMessage();
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -55,48 +57,61 @@ function moveBall() {
   if (ball.position.x <= -10 + paddleWidth + ballSize && ball.position.x >= -10 - ballSize && ball.position.y >= leftPaddle.position.y - paddleHeight / 2 - ballSize && ball.position.y <= leftPaddle.position.y + paddleHeight / 2 + ballSize) {
     ballDirection.x *= -1;
     ball.position.x = -10 + paddleWidth + ballSize;
-} else if (ball.position.x >= 10 - paddleWidth - ballSize && ball.position.x <= 10 + ballSize && ball.position.y >= rightPaddle.position.y - paddleHeight / 2 - ballSize && ball.position.y <= rightPaddle.position.y + paddleHeight / 2 + ballSize) {
+  } else if (ball.position.x >= 10 - paddleWidth - ballSize && ball.position.x <= 10 + ballSize && ball.position.y >= rightPaddle.position.y - paddleHeight / 2 - ballSize && ball.position.y <= rightPaddle.position.y + paddleHeight / 2 + ballSize) {
     ballDirection.x *= -1;
     ball.position.x = 10 - paddleWidth - ballSize;
-}
+  }
 
-if (ball.position.x < -15 || ball.position.x > 15) {
+  if (ball.position.x < -15 || ball.position.x > 15) {
     ball.position.x = 0;
     ball.position.y = 0;
     ballDirection = new THREE.Vector3(Math.random() > 0.5 ? 1 : -1, Math.random() > 0.5 ? 1 : -1, 0).normalize();
+  }
+
+  if (ball.position.x > 0 && ballDirection.x > 0) {
+    if (Math.random() < 0.1) {
+      leftPaddleDirection = Math.random() < 0.5 ? -1 : 1;
+    }
+  }
+
+  if (ball.position.x < 0 && ballDirection.x < 0) {
+    if (Math.random() < 0.1) {
+      rightPaddleDirection = Math.random() < 0.5 ? -1 : 1;
+    }
+  }
 }
 
 function animate() {
-    updatePaddle(leftPaddle, leftPaddleDirection);
-    updatePaddle(rightPaddle, rightPaddleDirection);
-    moveBall();
+  updatePaddle(leftPaddle, leftPaddleDirection);
+  updatePaddle(rightPaddle, rightPaddleDirection);
+  moveBall();
 
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
 }
 
 animate();
 
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'w') {
-        leftPaddleDirection = 1;
-    } else if (event.key === 's') {
-        leftPaddleDirection = -1;
-    }
+  if (event.key === 'w') {
+    leftPaddleDirection = 1;
+  } else if (event.key === 's') {
+    leftPaddleDirection = -1;
+  }
 
-    if (event.key === 'ArrowUp') {
-        rightPaddleDirection = 1;
-    } else if (event.key === 'ArrowDown') {
-        rightPaddleDirection = -1;
-    }
+  if (event.key === 'ArrowUp') {
+    rightPaddleDirection = 1;
+  } else if (event.key === 'ArrowDown') {
+    rightPaddleDirection = -1;
+  }
 });
 
 document.addEventListener('keyup', (event) => {
-    if (event.key === 'w' || event.key === 's') {
-        leftPaddleDirection = 0;
-    }
+  if (event.key === 'w' || event.key === 's') {
+    leftPaddleDirection = 0;
+  }
 
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        rightPaddleDirection = 0;
-    }
+  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    rightPaddleDirection = 0;
+  }
 });
